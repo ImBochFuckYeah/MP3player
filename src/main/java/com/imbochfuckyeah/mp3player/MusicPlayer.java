@@ -76,6 +76,12 @@ public class MusicPlayer extends javax.swing.JFrame {
 
         title1.setText("Select playlist");
 
+        playlistselect.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                playlistselectItemStateChanged(evt);
+            }
+        });
+
         jScrollPane1.setViewportView(songslist);
 
         title3.setText("Songs");
@@ -212,6 +218,11 @@ public class MusicPlayer extends javax.swing.JFrame {
         Thread playerThread = new Thread(() -> play());
         playerThread.start();
     }//GEN-LAST:event_btnplayMousePressed
+
+    private void playlistselectItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_playlistselectItemStateChanged
+        clearAll();
+        loadSongsToList();
+    }//GEN-LAST:event_playlistselectItemStateChanged
 
     /* FUNCTIONS BASICS */
     private void loadPlaylistsToComboBox() {
