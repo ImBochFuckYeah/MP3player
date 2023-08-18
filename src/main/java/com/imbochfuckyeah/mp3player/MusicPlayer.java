@@ -20,7 +20,7 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.SwingUtilities;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -32,9 +32,11 @@ public class MusicPlayer extends javax.swing.JFrame {
     private int currentSongIndex;
     private AudioInputStream audioInputStream;
     private SourceDataLine line;
+    private boolean isPlaying;
     private boolean isPaused;
     private boolean isStopped;
     private long startTimeMillis;
+    private String audioFilePath;
 
     /**
      * Creates new form MusicPlayer
@@ -42,6 +44,7 @@ public class MusicPlayer extends javax.swing.JFrame {
     public MusicPlayer() {
         initComponents();
         this.currentSongIndex = 0;
+        this.isPlaying = false;
         this.isPaused = false;
         this.isStopped = false;
         loadPlaylistsToComboBox();
@@ -68,6 +71,7 @@ public class MusicPlayer extends javax.swing.JFrame {
         progressbar = new javax.swing.JProgressBar();
         buttonscontainer = new javax.swing.JPanel();
         btnplay = new javax.swing.JButton();
+        btnpause = new javax.swing.JButton();
         navbar = new javax.swing.JMenuBar();
         newplaylist = new javax.swing.JMenu();
 
@@ -148,11 +152,24 @@ public class MusicPlayer extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        btnplay.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
-        btnplay.setText("play");
+        btnplay.setFont(new java.awt.Font("Liberation Sans", 1, 12)); // NOI18N
+        btnplay.setText("Play");
         btnplay.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 btnplayMousePressed(evt);
+            }
+        });
+
+        btnpause.setFont(new java.awt.Font("Liberation Sans", 1, 12)); // NOI18N
+        btnpause.setText("Pause");
+        btnpause.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btnpauseMousePressed(evt);
+            }
+        });
+        btnpause.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnpauseActionPerformed(evt);
             }
         });
 
@@ -162,14 +179,18 @@ public class MusicPlayer extends javax.swing.JFrame {
             buttonscontainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, buttonscontainerLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnplay, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(357, 357, 357))
+                .addComponent(btnplay, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnpause, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(292, 292, 292))
         );
         buttonscontainerLayout.setVerticalGroup(
             buttonscontainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(buttonscontainerLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnplay, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
+                .addGroup(buttonscontainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnplay, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
+                    .addComponent(btnpause, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -215,14 +236,21 @@ public class MusicPlayer extends javax.swing.JFrame {
     }//GEN-LAST:event_newplaylistMousePressed
 
     private void btnplayMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnplayMousePressed
-        Thread playerThread = new Thread(() -> play());
-        playerThread.start();
+        callToAction();
     }//GEN-LAST:event_btnplayMousePressed
 
     private void playlistselectItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_playlistselectItemStateChanged
         clearAll();
         loadSongsToList();
     }//GEN-LAST:event_playlistselectItemStateChanged
+
+    private void btnpauseMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnpauseMousePressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnpauseMousePressed
+
+    private void btnpauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnpauseActionPerformed
+        pause();
+    }//GEN-LAST:event_btnpauseActionPerformed
 
     /* FUNCTIONS BASICS */
     private void loadPlaylistsToComboBox() {
@@ -290,28 +318,49 @@ public class MusicPlayer extends javax.swing.JFrame {
         progressbar.setValue(val);
     }
 
+    private void callToAction() {
+        if (!isPaused) {
+            Thread playerThread = new Thread(() -> play());
+            playerThread.start();
+        } else {
+            resume();
+        }
+    }
+    
+    private void setEstatusBtn(boolean estatus) {
+        btnplay.setEnabled(estatus);
+    }
+
     /* FUNCTIONS MP3*/
     public void play() {
-        while (currentSongIndex < playlistSongs.size() && !isStopped) {
-            if (!isPaused) {
-                playSong(playlistSongs.get(currentSongIndex));
-                currentSongIndex++;
-            } else {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        if (!isPlaying) {
+            while (currentSongIndex < playlistSongs.size() && !isStopped) {
+                if (!isPaused) {
+                    playSong(playlistSongs.get(currentSongIndex));
+                    currentSongIndex++;
+                } else {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "There is already a song playing");
         }
     }
 
     public void pause() {
         isPaused = true;
+        btnplay.setText("Resume");
+        setEstatusBtn(true);
     }
 
     public void resume() {
         isPaused = false;
+        btnplay.setText("Play");
+        setEstatusBtn(false);
     }
 
     public void stop() {
@@ -325,7 +374,8 @@ public class MusicPlayer extends javax.swing.JFrame {
         final File file = new File(filePath);
 
         try (final AudioInputStream in = getAudioInputStream(file)) {
-
+        
+            audioFilePath = file.getPath();
             showSongPlaying(file.getName());
 
             final AudioFormat outFormat = getOutFormat(in.getFormat());
@@ -352,17 +402,31 @@ public class MusicPlayer extends javax.swing.JFrame {
         return new AudioFormat(PCM_SIGNED, rate, 16, ch, ch * 2, rate, false);
     }
 
-    private void stream(AudioInputStream in, SourceDataLine line)
-            throws IOException {
+    private void stream(AudioInputStream in, SourceDataLine line) throws IOException {
         final byte[] buffer = new byte[65536];
         int bytesRead;
+
+        startTimeMillis = System.currentTimeMillis();
+
+        int totalDurationInSeconds = 0;
+
+        try {
+            totalDurationInSeconds = getDurationInSeconds();
+            progressbar.setMaximum(totalDurationInSeconds);
+            System.out.println("Duración de la canción: " + totalDurationInSeconds + " segundos");
+        } catch (UnsupportedAudioFileException | IOException e) {
+            e.printStackTrace();
+        }
+
         while ((bytesRead = in.read(buffer, 0, buffer.length)) != -1) {
             if (!isPaused && !isStopped) {
                 line.write(buffer, 0, bytesRead);
                 long currentTimeMillis = System.currentTimeMillis();
                 long elapsedTimeMillis = currentTimeMillis - startTimeMillis;
                 int elapsedTimeSeconds = (int) (elapsedTimeMillis / 1000);
-                System.out.println("Tiempo transcurrido: " + elapsedTimeSeconds + " segundos");
+
+                // Actualiza la barra de progreso
+                progressbar.setValue(elapsedTimeSeconds);
             } else {
                 try {
                     Thread.sleep(100);
@@ -371,6 +435,19 @@ public class MusicPlayer extends javax.swing.JFrame {
                 }
             }
         }
+    }
+    
+    private int getDurationInSeconds() throws UnsupportedAudioFileException, IOException {
+        int totalDurationInSeconds = 0;
+        if (!audioFilePath.isEmpty()) {
+            File audioFile = new File(audioFilePath);
+            AudioFormat format = AudioSystem.getAudioFileFormat(audioFile).getFormat();
+            long frames = AudioSystem.getAudioFileFormat(audioFile).getFrameLength();
+            float frameRate = format.getFrameRate();
+
+            totalDurationInSeconds = (int) (frames / frameRate);
+        }
+        return totalDurationInSeconds;
     }
 
     /**
@@ -409,6 +486,7 @@ public class MusicPlayer extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnpause;
     private javax.swing.JButton btnplay;
     private javax.swing.JPanel buttonscontainer;
     private javax.swing.JScrollPane jScrollPane1;
