@@ -191,14 +191,14 @@ public class MusicPlayer extends javax.swing.JFrame {
         buttonscontainer.setLayout(buttonscontainerLayout);
         buttonscontainerLayout.setHorizontalGroup(
             buttonscontainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, buttonscontainerLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(buttonscontainerLayout.createSequentialGroup()
+                .addGap(247, 247, 247)
                 .addComponent(btnplay, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnpause, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnstop, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(292, 292, 292))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         buttonscontainerLayout.setVerticalGroup(
             buttonscontainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -360,7 +360,6 @@ public class MusicPlayer extends javax.swing.JFrame {
     public void play() {
         if (!isPlaying) {
             while (currentSongIndex < playlistSongs.size() && !isStopped) {
-                System.out.println("estoy aqui");
                 if (!isPaused) {
                     playSong(playlistSongs.get(currentSongIndex));
                     currentSongIndex++;
@@ -389,10 +388,21 @@ public class MusicPlayer extends javax.swing.JFrame {
         setEstatusBtn(false);
     }
 
+    private void next() {
+        System.out.println("currentSongIndex " + currentSongIndex);
+        System.out.println("playlistSongs.size() - 1 " + (playlistSongs.size() - 1));
+        if (currentSongIndex < playlistSongs.size() - 1) {
+            stop();
+            currentSongIndex++;
+            play();
+        }
+    }
+
     public void stop() {
         if (isPlaying) {
             isStopped = true;
             if (line != null) {
+                System.out.println(line);
                 line.close();
                 setEstatusBtn(true);
                 isPlaying = false;
@@ -412,6 +422,7 @@ public class MusicPlayer extends javax.swing.JFrame {
 
             final AudioFormat outFormat = getOutFormat(in.getFormat());
             final DataLine.Info info = new DataLine.Info(SourceDataLine.class, outFormat);
+            line = (SourceDataLine) AudioSystem.getLine(info);
 
             try (final SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info)) {
                 if (line != null) {
