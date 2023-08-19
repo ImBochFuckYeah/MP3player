@@ -48,6 +48,7 @@ public class MusicPlayer extends javax.swing.JFrame {
         this.isPaused = false;
         this.isStopped = false;
         loadPlaylistsToComboBox();
+        disabledButtons();
     }
 
     /**
@@ -76,6 +77,8 @@ public class MusicPlayer extends javax.swing.JFrame {
         btnnext = new javax.swing.JButton();
         btnprevius = new javax.swing.JButton();
         rbtnloop = new javax.swing.JRadioButton();
+        btnfirst = new javax.swing.JButton();
+        btnlast = new javax.swing.JButton();
         navbar = new javax.swing.JMenuBar();
         newplaylist = new javax.swing.JMenu();
 
@@ -171,11 +174,6 @@ public class MusicPlayer extends javax.swing.JFrame {
                 btnpauseMousePressed(evt);
             }
         });
-        btnpause.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnpauseActionPerformed(evt);
-            }
-        });
 
         btnstop.setFont(new java.awt.Font("Liberation Sans", 1, 12)); // NOI18N
         btnstop.setText("Stop");
@@ -184,11 +182,7 @@ public class MusicPlayer extends javax.swing.JFrame {
                 btnstopMousePressed(evt);
             }
         });
-        btnstop.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnstopActionPerformed(evt);
-            }
-        });
+
 
         btnnext.setFont(new java.awt.Font("Liberation Sans", 1, 12)); // NOI18N
         btnnext.setText("Next");
@@ -197,26 +191,34 @@ public class MusicPlayer extends javax.swing.JFrame {
                 btnnextMousePressed(evt);
             }
         });
-        btnnext.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnnextActionPerformed(evt);
-            }
-        });
+
 
         btnprevius.setFont(new java.awt.Font("Liberation Sans", 1, 12)); // NOI18N
-        btnprevius.setText("previus");
+        btnprevius.setText("Previus");
         btnprevius.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 btnpreviusMousePressed(evt);
             }
         });
-        btnprevius.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnpreviusActionPerformed(evt);
+
+        rbtnloop.setText("Loop");
+
+        btnfirst.setFont(new java.awt.Font("Liberation Sans", 1, 12)); // NOI18N
+        btnfirst.setText("First");
+        btnfirst.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btnfirstMousePressed(evt);
             }
         });
 
-        rbtnloop.setText("Loop");
+
+        btnlast.setFont(new java.awt.Font("Liberation Sans", 1, 12)); // NOI18N
+        btnlast.setText("Last");
+        btnlast.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btnlastMousePressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout buttonscontainerLayout = new javax.swing.GroupLayout(buttonscontainer);
         buttonscontainer.setLayout(buttonscontainerLayout);
@@ -225,7 +227,9 @@ public class MusicPlayer extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, buttonscontainerLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(rbtnloop)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnfirst, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnprevius, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnplay, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -235,7 +239,9 @@ public class MusicPlayer extends javax.swing.JFrame {
                 .addComponent(btnstop, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnnext, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(184, 184, 184))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnlast, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         buttonscontainerLayout.setVerticalGroup(
             buttonscontainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -247,7 +253,9 @@ public class MusicPlayer extends javax.swing.JFrame {
                         .addComponent(btnpause, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
                         .addComponent(btnstop, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
                         .addComponent(btnnext, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
-                        .addComponent(btnprevius, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE))
+                        .addComponent(btnprevius, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
+                        .addComponent(btnfirst, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
+                        .addComponent(btnlast, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, buttonscontainerLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(rbtnloop)))
@@ -305,38 +313,28 @@ public class MusicPlayer extends javax.swing.JFrame {
     }//GEN-LAST:event_playlistselectItemStateChanged
 
     private void btnpauseMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnpauseMousePressed
-        // TODO add your handling code here:
+        pause();
     }//GEN-LAST:event_btnpauseMousePressed
 
-    private void btnpauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnpauseActionPerformed
-        pause();
-    }//GEN-LAST:event_btnpauseActionPerformed
-
     private void btnstopMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnstopMousePressed
-        // TODO add your handling code here:
+        stop();
     }//GEN-LAST:event_btnstopMousePressed
 
-    private void btnstopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnstopActionPerformed
-        stop();
-    }//GEN-LAST:event_btnstopActionPerformed
-
     private void btnnextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnnextMousePressed
-        // TODO add your handling code here:
+        next();
     }//GEN-LAST:event_btnnextMousePressed
 
-    private void btnnextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnnextActionPerformed
-        // TODO add your handling code here:
-        nextSong();
-    }//GEN-LAST:event_btnnextActionPerformed
-
     private void btnpreviusMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnpreviusMousePressed
-        // TODO add your handling code here:
+        previus();
     }//GEN-LAST:event_btnpreviusMousePressed
 
-    private void btnpreviusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnpreviusActionPerformed
-        // TODO add your handling code here:
-        previusSong();
-    }//GEN-LAST:event_btnpreviusActionPerformed
+    private void btnfirstMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnfirstMousePressed
+        first();
+    }//GEN-LAST:event_btnfirstMousePressed
+
+    private void btnlastMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnlastMousePressed
+        last();
+    }//GEN-LAST:event_btnlastMousePressed
 
     /* FUNCTIONS BASICS */
     private void loadPlaylistsToComboBox() {
@@ -423,6 +421,7 @@ public class MusicPlayer extends javax.swing.JFrame {
             while (currentSongIndex < playlistSongs.size() && !isStopped) {
                 System.out.println("estoy aqui -> " + currentSongIndex + "of " + playlistSongs.size());
                 if (!isPaused) {
+                    disabledButtons();
                     playSong(playlistSongs.get(currentSongIndex));
                     currentSongIndex++;
                 } else {
@@ -434,8 +433,6 @@ public class MusicPlayer extends javax.swing.JFrame {
                 }
             }
             restart();
-        } else {
-            JOptionPane.showMessageDialog(rootPane, "There is already a song playing");
         }
     }
     
@@ -454,18 +451,7 @@ public class MusicPlayer extends javax.swing.JFrame {
         }
     }
 
-    public void next(){
-        System.out.println(currentSongIndex);
-        line.close();
-        isPlaying = false;
-        isPaused = false;
-        isStopped = false;
-        currentSongIndex++;
-        System.out.println(currentSongIndex);
-        callToAction();
-    }
-
-    private void nextSong() {
+    private void next() {
         if (isPlaying) {
             currentSongIndex++; // Avanzar al índice de la siguiente canción
             if (currentSongIndex >= playlistSongs.size()) {
@@ -476,18 +462,7 @@ public class MusicPlayer extends javax.swing.JFrame {
         }
     }
 
-    public void previus(){
-        System.out.println(currentSongIndex);
-        line.close();
-        isPlaying = false;
-        isPaused = false;
-        isStopped = false;
-        currentSongIndex--;
-        System.out.println(currentSongIndex);
-        play();
-    }
-
-    private void previusSong() {
+    private void previus() {
         if (isPlaying) {
             currentSongIndex--; // Avanzar al índice de la siguiente canción
             if (currentSongIndex >= playlistSongs.size()) {
@@ -521,10 +496,50 @@ public class MusicPlayer extends javax.swing.JFrame {
             if (line != null) {
                 line.close();
                 setEstatusBtn(true);
-                isPlaying = false;
             }
+            isPlaying = false;
+            currentSongIndex = 0;
+            disabledButtons();
+
         } else {
             JOptionPane.showMessageDialog(rootPane, "No song playing yet");
+        }
+    }
+
+    public void first() {
+        if (isPlaying) {
+            currentSongIndex = 0; // Avanzar al índice de la siguiente canción
+            if (currentSongIndex >= playlistSongs.size()) {
+                currentSongIndex = 0; // Reiniciar al principio de la lista si llega al final
+            }
+            line.close();
+            playSong(playlistSongs.get(currentSongIndex)); // Reproducir la siguiente canción
+        }
+    }
+
+    public void last() {
+        if (isPlaying) {
+            currentSongIndex = playlistSongs.size() - 1;
+            line.close();
+            playSong(playlistSongs.get(currentSongIndex)); // Reproducir la siguiente canción
+        }
+    }
+
+    public void disabledButtons(){
+        if(!isPlaying){
+            btnfirst.setEnabled(false);
+            btnprevius.setEnabled(false);
+            btnpause.setEnabled(false);
+            btnstop.setEnabled(false);
+            btnnext.setEnabled(false);
+            btnlast.setEnabled(false);
+        }else{
+            btnfirst.setEnabled(true);
+            btnprevius.setEnabled(true);
+            btnpause.setEnabled(true);
+            btnstop.setEnabled(true);
+            btnnext.setEnabled(true);
+            btnlast.setEnabled(true);
         }
     }
 
@@ -647,6 +662,8 @@ public class MusicPlayer extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnfirst;
+    private javax.swing.JButton btnlast;
     private javax.swing.JButton btnnext;
     private javax.swing.JButton btnpause;
     private javax.swing.JButton btnplay;
